@@ -1,0 +1,29 @@
+body {
+  background-color: #000;
+  min-height: 100vh;
+  margin: 0;
+}
+.centered-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.form-container {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+.btn-primary {
+  background-color: #0f5c5f;
+}
+.flash-message {
+  color: white;
+  background-color: rgb(255, 150, 150);
+  opacity: 100%;
+  margin-left: 5%;
+  margin-right: auto;
+  font-size: large;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  text-align: center;
+}
