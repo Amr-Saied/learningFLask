@@ -33,7 +33,8 @@ def register():
         token = db.get_user_by_username(connection, username)
 
         try:
-            db.add_user(connection, username, password)
+            db.add_user(connection, username, password) # if username in database already in database it will return an error to terminate the server
+            
             session['username'] = username
             session['logged_in'] = True
             session['registered'] = True
@@ -41,6 +42,7 @@ def register():
             return redirect(url_for('home'))
         except IntegrityError:
             flash('User already exists!')
+            session['registered'] = True
             return redirect(url_for('login'))
 
     return render_template("register.html")
@@ -84,27 +86,28 @@ def uploadGadget():
         return redirect(url_for('register'))
 
     if request.method == "POST":
-        image_for_gadget = request.files['image']
+        image_for_gadget = request.files['image']                   
 
         if not image_for_gadget or image_for_gadget.filename == '':
             flash('Nothing was Selected, please Choose something')
             return render_template('upload-gadget.html')
     
-        # if validators.allowed_file(image_for_gadget.filename) or not validators.allowed_file_size(image_for_gadget):
-        #     flash("Invalid File is Uploaded", "danger")
-        #     return render_template("upload-gadget.html")
+        if validators.allowed_file(image_for_gadget.filename) or not validators.allowed_file_size(image_for_gadget):
+            flash("Invalid File is Uploaded", "danger")
+            return render_template("upload-gadget.html")
 
-        title = request.form['title']
-        description = request.form['description']
-        price = request.form['price']
+        title_of_gadget = request.form['title']
+        description_to_gadget = request.form['description']
+        price_of_gadget = request.form['price']
         
         image_url = f"uploads/{image_for_gadget.filename}"
         image_for_gadget.save("static/" + image_url)
         user_id = session['user_id']
-        db.add_gadget(connection, user_id, title, description, price, image_url)
+        db.add_gadget(connection, user_id, title_of_gadget, description_to_gadget, price_of_gadget, image_url)
         return redirect(url_for('home'))
 
     return render_template("upload-gadget.html")
+
 
 if __name__ == "__main__":
     db.init_db(connection)
