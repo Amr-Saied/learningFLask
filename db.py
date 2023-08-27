@@ -79,3 +79,38 @@ def get_all_gadgets(connection):
     query = '''SELECT * FROM gadgets '''
     cursor.execute(query)
     return cursor.fetchall()
+
+def init_comments_table(connection):
+    cursor = connection.cursor()
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS comments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            gadget_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            text TEXT NOT NULL,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (gadget_id) REFERENCES gadgets (id),
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    ''')
+
+    connection.commit()
+    
+
+def add_comment(connection, gadget_id, user_id, text):
+    cursor = connection.cursor()
+    query = '''INSERT INTO comments (gadget_id, user_id, text) VALUES (?, ?, ?)'''
+    cursor.execute(query, (gadget_id, user_id, text))#to secure sqli
+    connection.commit()
+
+def get_comments_for_gadget(connection, gadget_id):
+    cursor = connection.cursor()
+    query = '''
+        SELECT  users.username, comments.text, comments.timestamp
+        FROM comments
+        JOIN users ON comments.user_id = users.id
+        WHERE comments.gadget_id = ?
+    '''
+    cursor.execute(query, (gadget_id,))#to secure sqli
+    return cursor.fetchall()
